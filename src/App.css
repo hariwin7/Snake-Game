@@ -1,33 +1,47 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+body {
+    width: 100vw;
+    height: 100vh;
   }
-  to {
-    transform: rotate(360deg);
+  
+  #root {
+    width: 100%;
+    height: 100%;
   }
-}
+  
+  .App {
+    display: flex;
+    /* margin: 5% 23%; */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .square {
+    width: 800px;
+    height: 800px;
+    display: grid;
+    background-color:#282C34;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+  }
+  
+  .box {
+    width: 40px;
+    height: 40px;
+    outline: 2px solid green;
+    display: inline-block;
+  }
+  
+  .food {
+    background:#FFFF00;
+  }
+  
+  .snake {
+    background:#30AD23;
+  }
+  
+  .snakebody {
+    background:#30AD23;
+  }
