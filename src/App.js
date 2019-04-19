@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import './App.css';
-import Score from './components/score';
 
 class App extends Component {
 
@@ -60,9 +59,9 @@ class App extends Component {
   }
   
   startSnakeGame = () =>{
-    const {snake} = this.state;
     //let gameInterval = setInterval(() => {this.runSnake()}, 200);
     const eatFood = this.eatFood();
+    if (eatFood) this.incrementScore();
     this.setState(({ snake , food}) =>{
       const updateState = {
       snake: {
@@ -77,11 +76,61 @@ class App extends Component {
      };
      if(!eatFood) updateState.snake.body.pop();
      return updateState;
-  }    )
+  },() =>{
+      const { snake } = this.state;
+      if (this.checkBoundary() || this.ifSnakeBody(snake.snakeHead)){
+        this.gameOver();
+        this.stopGame();
+      }
+        return;
+  }  )
     
   }
+
+  incrementScore = () => {
+    if(this.eatFood()){
+      this.setState({ score : this.state.score + 5});
+    }
+  }
+
+  gameOver = () =>{
+      this.setState(({ food , snake, score , snakeDirection, gameInterval}) =>{
+        const updateState = {
+      food : {
+        boxrow : Math.floor(Math.random() * 20),
+        boxcol: Math.floor(Math.random() * 20),
+      },
+      snake: {
+        snakeHead: {
+          boxrow: 9,
+          boxcol: 9
+        },
+        snakeSpeed: {
+          x: 1,
+          y: 0
+        },
+        body: []
+        
+      },
+      score:0,
+      snakeDirection:"ArrowRight",
+      gameInterval:0
+
+
+     }
+     return updateState;
+        
+      });
+  }
+
+  checkBoundary = () =>{
+    const { snake } = this.state;
+    return  (snake.snakeHead.boxrow > 19 || snake.snakeHead.boxrow <0 
+      || snake.snakeHead.boxcol > 19 || snake.snakeHead.boxcol < 0);
+
+  }
    randomFood(){
-    const { snake, food} = this.state;
+    const { snake } = this.state;
     const randFood = {
       boxrow : Math.floor(Math.random() * 20),
       boxcol: Math.floor(Math.random() * 20),
@@ -165,7 +214,7 @@ class App extends Component {
   }
 
   eatFood = () =>{
-    const { snake, food, score} = this.state;
+    const { snake, food } = this.state;
     return food.boxrow === snake.snakeHead.boxrow &&
     food.boxcol === snake.snakeHead.boxcol;
 
@@ -188,7 +237,8 @@ class App extends Component {
     return (
       <React.Fragment>
       <div className="App">
-      {/* <Score score={score}></Score> */}
+      <h1> <span className="badge badge-primary score">Score: {score}</span></h1>
+      <h1><span className="badge badge-primary score"> High Score: {score}</span></h1>
       <button className="btn btn-primary" onClick={this.stopGame}>Stop Game</button>
       <button className="btn btn-primary" onClick={this.start}>start Game</button>
         <div className="square">
