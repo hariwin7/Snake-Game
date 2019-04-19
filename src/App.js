@@ -83,7 +83,7 @@ class App extends Component {
   },() =>{
       const { snake } = this.state;
       if (this.checkBoundary() || this.ifSnakeBody(snake.snakeHead)){
-        this.gameOver();
+        this.gameOver(1);
         this.stopGame();
       }
         return;
@@ -97,7 +97,7 @@ class App extends Component {
     }
   }
 // Function To Make The Game Over In Case Of Outofbounds Or Self Collision
-  gameOver = () =>{
+  gameOver = (status) =>{
       this.setState(({ food , snake, score , snakeDirection, gameInterval}) =>{
         const updateState = {
       food : {
@@ -119,7 +119,7 @@ class App extends Component {
       score:0,
       snakeDirection:"ArrowRight",
       gameInterval:0,
-      gameOver:1
+      gameOver:status
     }
      return updateState;
         
@@ -223,7 +223,7 @@ class App extends Component {
   // Function  To Restart The Game 
   restart = () =>{
     this.gameOver();
-    this.stopGame();
+    this.stopGame(0);
   }
 // Function That Checks If The Snake Eats The Food
   eatFood = () =>{
@@ -252,25 +252,27 @@ class App extends Component {
     }
     return message;
   }
-
+  
 
   render() {
+    document.body.style = 'background: #58B792;';
     const {square , score} = this.state;
     return (
       <React.Fragment>
+       
         <div className="App">
-          <div className="container">
-            <div className="row">
-              <div className="marg marg-btm">
+          <div className="container"> 
+            <div className="row justify-content-center">
                 <h1> <span className="badge badge-success score">Score: {score}</span></h1>
-              </div>
-              <div className="btn-group marg-btm" role="group">
-                <button className="btn btn-dark" onClick={this.restart}>Restart Game</button>
-                <button className="btn btn-dark" onClick={this.stopGame}>Pause Game</button>
-                <button className="btn btn-dark" onClick={this.start}>Start Game</button>
-              </div>
             </div>
-            <div className="row">
+              <div className="row justify-content-center">
+                <div className="btn-group marg-btm" role="group">
+                  <button className="btn btn-dark" onClick={this.restart}>Restart Game</button>
+                  <button className="btn btn-dark" onClick={this.stopGame}>Pause Game</button>
+                  <button className="btn btn-dark" onClick={this.start}>Start Game</button>
+                </div>
+              </div>
+            <div className="row justify-content-center">
               <div className="square">
                 {
                   square.map((boxrow, i) =>(
@@ -289,11 +291,12 @@ class App extends Component {
 
                 
                 }
+                </div> 
                 </div>
-                <div className="marg">                
+                <div className="row  justify-content-center">                
                   <h1>{this.gameStatus()}</h1>                
                 </div>
-              </div>          
+                       
           </div>
         </div>
 
