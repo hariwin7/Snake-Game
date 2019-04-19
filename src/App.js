@@ -6,7 +6,7 @@ class App extends Component {
 
   constructor(){
     super();
-    const square = [];
+    const square = []; // For making the canvas in which snake runs
     for(let boxrow = 0;boxrow < 20;boxrow++){
       const boxcols=[];
       for(let boxcol = 0;boxcol < 20;boxcol++){
@@ -19,6 +19,7 @@ class App extends Component {
     }
     this.state= {
       square,
+      // Creating The Food For Snake At Random Positions
       food : {
         boxrow : Math.floor(Math.random() * 20),
         boxcol: Math.floor(Math.random() * 20),
@@ -35,31 +36,32 @@ class App extends Component {
         body: []
         
       },
-      score:0,
-      snakeDirection:"ArrowRight",
-      gameInterval:0
+      score:0, // Score Of The Game 
+      snakeDirection:"ArrowRight", // Storing The Keyboard Keys In A Variable
+      gameInterval:0,
+      gameStatus:1, // A Toggle Switch For Staring And Restarting The Game
+      gameOver:0
     }
   }
-
+// Function To Check The Head Of Snake In The Canvas.
   ifSnakeHead = (box) => {
     const { snake } = this.state;
     return snake.snakeHead.boxrow === box.boxrow &&
     snake.snakeHead.boxcol === box.boxcol ;
   }
-
+// Function To Check Food In The Canvas.
   ifFood = (box) => {
     const { food } = this.state;
     return food.boxrow === box.boxrow && 
     food.boxcol === box.boxcol ;
   }
-
+// Function To Check The Body Of Snake In The Canvas.
   ifSnakeBody = (box) => {
     const { snake } = this.state;
     return snake.body.find(sBody => sBody.boxrow === box.boxrow && sBody.boxcol === box.boxcol);
   }
-  
+  // Function That Updates Score And Speed Also Checks Boundary And SelfCollision
   startSnakeGame = () =>{
-    //let gameInterval = setInterval(() => {this.runSnake()}, 200);
     const eatFood = this.eatFood();
     if (eatFood) this.incrementScore();
     this.setState(({ snake , food}) =>{
@@ -74,7 +76,9 @@ class App extends Component {
       },
       food : this.eatFood() ? this.randomFood() : food 
      };
-     if(!eatFood) updateState.snake.body.pop();
+     if(!eatFood){
+      updateState.snake.body.pop();
+     } 
      return updateState;
   },() =>{
       const { snake } = this.state;
@@ -86,13 +90,13 @@ class App extends Component {
   }  )
     
   }
-
+// Function To Incremnent Score When Snake Eats Food
   incrementScore = () => {
     if(this.eatFood()){
       this.setState({ score : this.state.score + 5});
     }
   }
-
+// Function To Make The Game Over In Case Of Outofbounds Or Self Collision
   gameOver = () =>{
       this.setState(({ food , snake, score , snakeDirection, gameInterval}) =>{
         const updateState = {
@@ -114,21 +118,21 @@ class App extends Component {
       },
       score:0,
       snakeDirection:"ArrowRight",
-      gameInterval:0
-
-
-     }
+      gameInterval:0,
+      gameOver:1
+    }
      return updateState;
         
       });
   }
-
+// Function To Check If Snake Goes Out Of Canvas
   checkBoundary = () =>{
     const { snake } = this.state;
     return  (snake.snakeHead.boxrow > 19 || snake.snakeHead.boxrow <0 
       || snake.snakeHead.boxcol > 19 || snake.snakeHead.boxcol < 0);
 
   }
+  // Function To Randomise The Position Of Food
    randomFood(){
     const { snake } = this.state;
     const randFood = {
@@ -142,9 +146,7 @@ class App extends Component {
       else
       return randFood;
     }
-    
-    
-
+ // Function That Changes The Direction Of The Snake On Keyborad Interrupt
   runSnake = () => {
     
       const { snake, snakeDirection } = this.state;
@@ -204,15 +206,26 @@ class App extends Component {
       }
       this.startSnakeGame();
   }
-
+//Functio To Pause The Game
   stopGame = () => {
-    console.log(this.state.gameInterval);
+    if(this.state.gameStatus===0){
+    this.setState({gameStatus:1})
     clearInterval(this.state.gameInterval);
+    }
   }
+  // Function That Starts The Game 
   start = () =>{
-    this.setState({ gameInterval : setInterval(this.runSnake, 300) }); 
+    if(this.state.gameStatus===1){
+    this.setState({gameStatus:0 , gameOver :0})
+    this.setState({ gameInterval : setInterval(this.runSnake, 250) }); 
+    }
   }
-
+  // Function  To Restart The Game 
+  restart = () =>{
+    this.gameOver();
+    this.stopGame();
+  }
+// Function That Checks If The Snake Eats The Food
   eatFood = () =>{
     const { snake, food } = this.state;
     return food.boxrow === snake.snakeHead.boxrow &&
@@ -226,9 +239,18 @@ class App extends Component {
       console.log(this.state.snakeDirection);
     });
     this.start();
-    
-     //this.startSnakeGame();
        
+  }
+  // Function That Helps To Update The Messages Displayed For UserInteractivity And Understanding
+  gameStatus = () =>{
+    let message="";
+    if (this.state.gameOver){
+      message += "Game Over! ";
+    }
+    if (this.state.gameStatus){
+      message += "Press Start Game";
+    }
+    return message;
   }
 
 
@@ -236,32 +258,45 @@ class App extends Component {
     const {square , score} = this.state;
     return (
       <React.Fragment>
-      <div className="App">
-      <h1> <span className="badge badge-primary score">Score: {score}</span></h1>
-      <h1><span className="badge badge-primary score"> High Score: {score}</span></h1>
-      <button className="btn btn-primary" onClick={this.stopGame}>Stop Game</button>
-      <button className="btn btn-primary" onClick={this.start}>start Game</button>
-        <div className="square">
-          {
-            square.map((boxrow, i) =>(
-                boxrow.map((box) =>(
+        <div className="App">
+          <div className="container">
+            <div className="row">
+              <div className="marg marg-btm">
+                <h1> <span className="badge badge-success score">Score: {score}</span></h1>
+              </div>
+              <div className="btn-group marg-btm" role="group">
+                <button className="btn btn-dark" onClick={this.restart}>Restart Game</button>
+                <button className="btn btn-dark" onClick={this.stopGame}>Pause Game</button>
+                <button className="btn btn-dark" onClick={this.start}>Start Game</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="square">
+                {
+                  square.map((boxrow, i) =>(
+                      boxrow.map((box) =>(
 
-                  <div key={`${box.boxrow} ${box.boxcol}`} className={`box 
-                  ${
-                    this.ifSnakeHead(box)
-                    ? 'snake' : this.ifFood(box)
-                    ? 'food' : this.ifSnakeBody(box)
-                    ? 'snakebody' : ''
-                    }`}>
-                  </div>
-                ))
-            ))
+                        <div key={`${box.boxrow} ${box.boxcol}`} className={`box 
+                        ${
+                          this.ifSnakeHead(box)
+                          ? 'snake' : this.ifFood(box)
+                          ? 'food' : this.ifSnakeBody(box)
+                          ? 'snakebody' : ''
+                          }`}>
+                        </div>
+                      ))
+                  ))
 
-            
-          }
+                
+                }
+                </div>
+                <div className="marg">                
+                  <h1>{this.gameStatus()}</h1>                
+                </div>
+              </div>          
           </div>
-          
-      </div>
+        </div>
+
       </React.Fragment>
     );
         }
