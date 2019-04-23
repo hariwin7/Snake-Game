@@ -5,7 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This is a minimal  Snake Game made with react.
 
 ## Online Delployed Link
-Open [Snake Game] (https://hariwin7.github.io/Snake-Game/) to view it in browser.
+Open [Snake Game](https://hariwin7.github.io/Snake-Game/) to view it in browser.
 
 ## Available Scripts
 
